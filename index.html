@@ -10,37 +10,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* === FULL SCREEN FIXES === */
+        /* === DARK THEME & FULL SCREEN SETUP === */
         * { box-sizing: border-box; }
         
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #34d399; /* Emerald 400 for better contrast on dark */
+            --border: #334155;
+        }
+
         body { 
             margin: 0; 
             padding: 0; 
-            background-color: #0f172a; /* Dark background behind slides */
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             font-family: 'Sarabun', sans-serif; 
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
             
-            /* Enable Scroll Snap for presentation feel */
+            /* Enable Scroll Snap */
             scroll-snap-type: y mandatory;
             height: 100vh;
             overflow-y: scroll;
         }
         
         .slide-container {
-            /* FORCE FULL SCREEN */
             width: 100vw;
             height: 100vh;
-            
-            background-color: #ffffff;
+            background-color: var(--bg-dark);
             position: relative;
             display: flex;
             flex-direction: column;
-            padding: 40px 80px; /* Internal padding */
-            overflow: hidden; /* Hide overflow content */
-            
-            /* Snap alignment */
+            padding: 40px 80px;
+            overflow: hidden;
             scroll-snap-align: start;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border);
         }
 
         /* BACKGROUND DECORATION */
@@ -48,21 +55,33 @@
             position: absolute;
             width: 50vw;
             height: 50vw;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.0) 70%);
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.15) 0%, rgba(15, 23, 42, 0.0) 70%);
             border-radius: 50%;
             z-index: 0;
-            filter: blur(60px);
+            filter: blur(80px);
             pointer-events: none;
         }
         .bg-blob-1 { top: -20%; right: -20%; }
         .bg-blob-2 { bottom: -20%; left: -20%; }
 
         /* TYPOGRAPHY */
-        h1, h2, h3 { font-family: 'Prompt', sans-serif; color: #0f172a; margin: 0; }
-        h1 { font-size: 5vw; line-height: 1.1; font-weight: 700; color: #10b981; } /* Responsive Font Size */
-        .slide-title { font-size: 3vw; font-weight: 600; margin-bottom: 3vh; text-align: left; position: relative; z-index: 2; border-left: 8px solid #10b981; padding-left: 20px; }
-        p, li { font-size: 1.5vw; line-height: 1.6; color: #475569; }
-        .accent-text { color: #10b981; font-weight: 700; }
+        h1, h2, h3, h4 { font-family: 'Prompt', sans-serif; color: var(--text-primary); margin: 0; }
+        h1 { font-size: 5vw; line-height: 1.1; font-weight: 700; color: var(--accent); text-shadow: 0 0 30px rgba(52, 211, 153, 0.2); }
+        
+        .slide-title { 
+            font-size: 3vw; 
+            font-weight: 600; 
+            margin-bottom: 3vh; 
+            text-align: left; 
+            position: relative; 
+            z-index: 2; 
+            border-left: 8px solid var(--accent); 
+            padding-left: 20px;
+            color: var(--text-primary);
+        }
+        
+        p, li { font-size: 1.5vw; line-height: 1.6; color: var(--text-secondary); }
+        .accent-text { color: var(--accent); font-weight: 700; }
 
         .content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; width: 100%; }
 
@@ -72,22 +91,34 @@
         .title-layout .subtitle { font-size: 1.8vw; max-width: 80%; }
 
         .tiled-content { display: flex; gap: 30px; width: 100%; height: 60%; }
-        .tile { flex: 1; background: #f8fafc; padding: 3vw; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; }
-        .tile i { font-size: 4vw; color: #10b981; margin-bottom: 20px; }
+        .tile { 
+            flex: 1; 
+            background: var(--bg-card); 
+            padding: 3vw; 
+            border-radius: 20px; 
+            border: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        .tile:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .tile i { font-size: 4vw; color: var(--accent); margin-bottom: 20px; }
         .tile h3 { font-size: 2vw; margin-bottom: 15px; }
 
         .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; width: 100%; height: 100%; }
         .image-wrapper { 
             border-radius: 24px; 
             overflow: hidden; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
-            height: 60vh; 
-            background: #f1f5f9; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); 
+            height: 50vh; 
+            background: var(--bg-card); 
+            border: 1px solid var(--border);
             display: flex; 
             align-items: center; 
             justify-content: center;
         }
-        .image-wrapper i { font-size: 10vw; color: #cbd5e1; }
+        .image-wrapper i { font-size: 10vw; color: var(--text-secondary); opacity: 0.5; }
 
         /* === DIAGRAM STYLES === */
         .swimlane-container {
@@ -99,9 +130,9 @@
             font-family: 'Prompt';
         }
         .swimlane-col {
-            background: #f8fafc;
+            background: rgba(30, 41, 59, 0.5);
             border-radius: 12px;
-            border: 1px dashed #cbd5e1;
+            border: 1px dashed var(--border);
             padding: 1vw;
             display: flex;
             flex-direction: column;
@@ -110,47 +141,103 @@
         .swimlane-header {
             font-weight: bold;
             margin-bottom: 2vh;
-            color: #10b981;
+            color: var(--accent);
             font-size: 1.2vw;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .process-box {
-            background: white;
+            background: var(--bg-card);
             padding: 1.5vh;
             border-radius: 8px;
             font-size: 1.2vw;
             text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
             width: 90%;
             margin-bottom: 3vh;
-            border-left: 5px solid #10b981;
+            border-left: 5px solid var(--accent);
+            color: var(--text-primary);
             position: relative;
         }
         
         /* Activity Flow */
         .flow-container { display: flex; justify-content: center; align-items: center; gap: 2vw; margin-top: 2vh; }
         .flow-step {
-            width: 18vw; background: white; border: 2px solid #e2e8f0; border-radius: 15px; padding: 2vh; text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 18vw; 
+            background: var(--bg-card); 
+            border: 2px solid var(--border); 
+            border-radius: 15px; 
+            padding: 2vh; 
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
-        .flow-step h4 { color: #10b981; font-size: 1.5vw; margin-bottom: 5px; }
-        .flow-step p { font-size: 1vw; color: #64748b; margin: 0; }
-        .flow-arrow { font-size: 2vw; color: #cbd5e1; }
+        .flow-step h4 { color: var(--accent); font-size: 1.5vw; margin-bottom: 5px; }
+        .flow-step p { font-size: 1vw; color: var(--text-secondary); margin: 0; }
+        .flow-arrow { font-size: 2vw; color: var(--text-secondary); }
 
-        /* Mobile Responsive Adjustments */
+        /* Custom Override for Flow Step Reverse Colors in Dark Mode */
+        .flow-step.reverse-step { background: rgba(52, 211, 153, 0.1) !important; border-color: var(--accent) !important; }
+
+        .verif-number { font-size: 15vw; font-weight: 700; color: var(--accent); line-height: 1; font-family: 'Prompt'; }
+
+        /* === MOBILE RESPONSIVE === */
         @media (max-width: 768px) {
-            .slide-container { padding: 20px; height: auto; min-height: 100vh; }
-            h1 { font-size: 10vw; }
-            .slide-title { font-size: 8vw; }
-            p, li { font-size: 4vw; }
-            .tiled-content { flex-direction: column; height: auto; }
-            .two-column { grid-template-columns: 1fr; gap: 30px; }
-            .image-wrapper { height: 300px; }
-            .swimlane-container { display: flex; flex-direction: column; height: auto; }
-            .flow-container { flex-direction: column; }
-            .flow-arrow { transform: rotate(90deg); }
+            body, .slide-container {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: visible;
+                display: block;
+                scroll-snap-type: none; /* Disable snap on mobile for better flow */
+            }
+            .slide-container {
+                padding: 40px 20px;
+                min-height: auto;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            /* Typography Scaling */
+            h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+            .title-layout .subtitle { font-size: 1rem; max-width: 100%; }
+            .slide-title { font-size: 1.8rem; border-left-width: 5px; padding-left: 15px; margin-bottom: 2rem; }
+            p, li { font-size: 1rem; }
+            
+            .tiled-content { flex-direction: column; height: auto; display: block; }
+            .tile { margin-bottom: 20px; padding: 30px; }
+            .tile i { font-size: 3rem; }
+            .tile h3 { font-size: 1.3rem; }
+
+            .two-column { display: flex; flex-direction: column; gap: 30px; height: auto; }
+            .image-wrapper { height: 250px; width: 100%; }
+            .image-wrapper i { font-size: 4rem; }
+
+            /* Diagram Mobile Fixes */
+            .swimlane-container { display: flex; flex-direction: column; height: auto; gap: 20px; }
+            .swimlane-col { width: 100%; min-height: auto; padding: 20px; }
+            .swimlane-header { font-size: 1.2rem; margin-bottom: 15px; }
+            
+            /* Reset inline margins for mobile flow */
+            .process-box { 
+                width: 100%; 
+                margin-top: 10px !important; 
+                margin-bottom: 10px !important;
+                font-size: 1rem;
+                padding: 15px;
+            }
+            .swimlane-col > div[style*="height"] { display: none; } /* Hide spacers */
+
+            .flow-container { flex-direction: column; gap: 15px; }
+            .flow-step { width: 100%; padding: 20px; }
+            .flow-step h4 { font-size: 1.2rem; }
+            .flow-step p { font-size: 0.9rem; }
+            .flow-arrow { transform: rotate(90deg); margin: 5px 0; font-size: 1.5rem; }
+            
+            /* Fix reverse flow container on mobile */
+            .flow-container[style*="row-reverse"] { flex-direction: column; }
+            .flow-container[style*="row-reverse"] .flow-arrow { transform: rotate(270deg); }
+
+            .verif-number { font-size: 6rem; text-align: center; margin-bottom: 20px; }
+            #slide8 .content-area > div { display: flex; flex-direction: column; text-align: center; }
         }
 
     </style>
@@ -162,7 +249,7 @@
     <div class="bg-blob bg-blob-1"></div>
     <div class="bg-blob bg-blob-2"></div>
     <div class="title-layout">
-        <div style="background: #10b981; color: white; padding: 0.5vw 2vw; border-radius: 50px; font-weight: 700; margin-bottom: 30px; letter-spacing: 2px; font-size: 1vw;">CANVAS DESIGN</div>
+        <div style="background: var(--accent); color: #0f172a; padding: 8px 30px; border-radius: 50px; font-weight: 700; margin-bottom: 30px; letter-spacing: 2px; font-size: 1rem; text-transform: uppercase;">Canvas Design</div>
         <h1>ระบบการเลือกตั้งที่โปร่งใส<br>และตรวจสอบได้</h1>
         <p class="subtitle">Trustless & Traceable Election System Framework<br>เปลี่ยนจาก "ความเชื่อใจ" เป็น "คณิตศาสตร์" ให้ประชาชนเป็นผู้ตรวจสอบ</p>
     </div>
@@ -223,7 +310,7 @@
                 <div class="process-box" style="border-color: #ef4444;">6. แสดงผลตรวจสอบ</div>
             </div>
         </div>
-        <p style="text-align: center; margin-top: 2vh; color: #64748b; font-size: 1.2vw;">แผนภาพแสดงการไหลของข้อมูลระหว่างผู้ใช้และระบบในแต่ละขั้นตอน</p>
+        <p style="text-align: center; margin-top: 2vh; color: var(--text-secondary); font-size: 1rem;">แผนภาพแสดงการไหลของข้อมูลระหว่างผู้ใช้และระบบในแต่ละขั้นตอน</p>
     </div>
 </div>
 
@@ -248,20 +335,20 @@
             </div>
         </div>
         
-        <div style="text-align: center; margin: 2vh 0;"><i class="fa-solid fa-arrow-down" style="font-size: 3vw; color: #cbd5e1;"></i></div>
+        <div style="text-align: center; margin: 2vh 0;"><i class="fa-solid fa-arrow-down" style="font-size: 3vw; color: var(--border);"></i></div>
 
         <div class="flow-container" style="flex-direction: row-reverse;">
-            <div class="flow-step" style="background:#ecfdf5; border-color:#10b981;">
+            <div class="flow-step reverse-step">
                 <h4>6. ตรวจสอบ</h4>
                 <p>เช็คภาพบัตรตัวเอง</p>
             </div>
             <div class="flow-arrow">←</div>
-            <div class="flow-step" style="background:#ecfdf5; border-color:#10b981;">
+            <div class="flow-step reverse-step">
                 <h4>5. อัปโหลด</h4>
                 <p>ขึ้น Cloud สาธารณะ</p>
             </div>
             <div class="flow-arrow">←</div>
-            <div class="flow-step" style="background:#ecfdf5; border-color:#10b981;">
+            <div class="flow-step reverse-step">
                 <h4>4. สแกน (OCR)</h4>
                 <p>แปลงเป็นไฟล์ภาพ</p>
             </div>
@@ -278,9 +365,9 @@
                 <h3>แก้ปัญหา "บัตรเขย่ง"</h3>
                 <p>ตู้ Kiosk จะพิมพ์บัตรเลือกตั้งออกมาก็ต่อเมื่อมีผู้มีสิทธิตัวจริงมายืนยันตัวตนเท่านั้น</p>
                 <ul style="margin-top: 20px;">
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:#10b981; margin-right: 10px;"></i> <strong>On-demand:</strong> ไม่มีการพิมพ์ทิ้งไว้</li>
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:#10b981; margin-right: 10px;"></i> <strong>Unique Hash:</strong> สร้างรหัสลับเฉพาะตัว</li>
-                    <li><i class="fa-solid fa-check-circle" style="color:#10b981; margin-right: 10px;"></i> <strong>Real-time DB:</strong> เช็คสิทธิทันที</li>
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:var(--accent); margin-right: 10px;"></i> <strong>On-demand:</strong> ไม่มีการพิมพ์ทิ้งไว้</li>
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:var(--accent); margin-right: 10px;"></i> <strong>Unique Hash:</strong> สร้างรหัสลับเฉพาะตัว</li>
+                    <li><i class="fa-solid fa-check-circle" style="color:var(--accent); margin-right: 10px;"></i> <strong>Real-time DB:</strong> เช็คสิทธิทันที</li>
                 </ul>
             </div>
             <div class="image-wrapper">
@@ -299,9 +386,9 @@
                 <h3>เปลี่ยนกระดาษเป็นดิจิทัล</h3>
                 <p>High-speed scanners และระบบ OCR จะทำหน้าที่เปลี่ยนบัตรเลือกตั้งให้กลายเป็นหลักฐานดิจิทัลที่แก้ไขไม่ได้</p>
                 <ul style="margin-top: 20px;">
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-bolt" style="color:#10b981; margin-right: 10px;"></i> <strong>Massive Throughput:</strong> สแกนได้เร็วสูง</li>
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-font" style="color:#10b981; margin-right: 10px;"></i> <strong>OCR Technology:</strong> อ่านลายมืออัตโนมัติ</li>
-                    <li><i class="fa-solid fa-cloud-upload" style="color:#10b981; margin-right: 10px;"></i> <strong>Instant Upload:</strong> ส่งข้อมูลขึ้นเว็บทันที</li>
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-bolt" style="color:var(--accent); margin-right: 10px;"></i> <strong>Massive Throughput:</strong> สแกนได้เร็วสูง</li>
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-font" style="color:var(--accent); margin-right: 10px;"></i> <strong>OCR Technology:</strong> อ่านลายมืออัตโนมัติ</li>
+                    <li><i class="fa-solid fa-cloud-upload" style="color:var(--accent); margin-right: 10px;"></i> <strong>Instant Upload:</strong> ส่งข้อมูลขึ้นเว็บทันที</li>
                 </ul>
             </div>
             <div class="image-wrapper">
@@ -321,7 +408,7 @@
                 <p style="margin-top: 20px;">ใช้เก็บ "รหัส Hash ID" และ "ใบรับรองการเลือกตั้ง" เพื่อใช้ยืนยันว่าคุณไปใช้สิทธิแล้ว และใช้ตรวจสอบความถูกต้องของคะแนนภายหลัง</p>
             </div>
             <div class="image-wrapper">
-                 <i class="fa-solid fa-mobile-button" style="color: #10b981;"></i>
+                 <i class="fa-solid fa-mobile-button" style="color: var(--accent);"></i>
             </div>
         </div>
     </div>
@@ -332,12 +419,12 @@
     <h2 class="slide-title">พลังแห่งการตรวจสอบ (Verification)</h2>
     <div class="content-area">
         <div style="display: flex; align-items: center; gap: 5vw; justify-content: center;">
-            <div style="font-size: 15vw; font-weight: 700; color: #10b981; line-height: 1; font-family: 'Prompt';">100%</div>
+            <div class="verif-number">100%</div>
             <div>
                 <h3>ตรวจสอบด้วยตาตัวเอง</h3>
                 <p>คุณไม่ต้องถามเจ้าหน้าที่ว่า "คะแนนถูกนับไหม?"</p>
                 <p>แต่คุณสามารถ <strong>"เห็นภาพบัตรที่คุณกากบาทด้วยมือตัวเอง"</strong> บนหน้าจอได้เลย</p>
-                <div style="margin-top: 30px; padding: 2vw; background: #f0fdf4; border-radius: 10px; border-left: 0.5vw solid #10b981;">
+                <div style="margin-top: 30px; padding: 2vw; background: rgba(52, 211, 153, 0.1); border-radius: 10px; border-left: 0.5vw solid var(--accent); color: var(--text-primary);">
                     <strong>Empowerment:</strong> คืนอำนาจให้ประชาชนเป็นเจ้าของคะแนนเสียงอย่างแท้จริง
                 </div>
             </div>
@@ -361,16 +448,6 @@
                 <p>หากพบความผิดปกติแม้แต่จุดเดียว ระบบจะเปิดให้กด Report เพื่อนำไปสู่การตรวจสอบทันที</p>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Slide 10: Conclusion -->
-<div class="slide-container" id="slide10">
-    <div class="bg-blob bg-blob-1"></div>
-    <div class="title-layout">
-        <h2 style="font-size: 5vw;">มีคำถามเพิ่มเติมไหมครับ?</h2>
-        <p class="subtitle">ขอบคุณที่ร่วมออกแบบระบบการเลือกตั้งที่โปร่งใสไปด้วยกัน</p>
-        <div style="margin-top: 5vh; font-weight: 700; color: #10b981; font-size: 2vw; letter-spacing: 2px;">TRUSTLESS • TRACEABLE • TRANSPARENT</div>
     </div>
 </div>
 
