@@ -168,6 +168,31 @@
             top: 2px;
         }
 
+        /* === VISUAL SCENE STYLES === */
+        .visual-scene {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .scene-main {
+            font-size: 3.5rem;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+        .scene-sub {
+            font-size: 1.8rem;
+            position: absolute;
+            z-index: 2;
+            background: var(--bg-card);
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
+        }
+
         /* === MOBILE RESPONSIVE === */
         @media (max-width: 900px) {
             .section-container { padding: 40px 20px; height: auto; min-height: auto; }
@@ -237,16 +262,19 @@
 
     <!-- 3. Key Activities (The FLOW) -->
     <div class="section-container">
-        <h2>2. ขั้นตอนการเลือกตั้ง (Key Activities)</h2>
+        <h2>2. ขั้นตอนการเลือกตั้ง (Visual Journey)</h2>
         <div class="timeline-wrapper">
             
             <!-- Step 1 -->
             <div class="timeline-step">
                 <div class="step-content">
                     <div class="step-number">1</div>
-                    <i class="fa-solid fa-id-card card-icon" style="font-size: 2rem;"></i>
-                    <h3>User Identification</h3>
-                    <p>ยืนยันตัวตนด้วยบัตรประชาชน เพื่อตรวจสอบสิทธิ ณ หน่วยเลือกตั้ง</p>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-user scene-main"></i>
+                        <i class="fa-solid fa-id-card scene-sub" style="bottom: 0; right: -10px; color: #facc15;"></i>
+                    </div>
+                    <h3>แสดงตัวตน</h3>
+                    <p>ผู้มีสิทธิเลือกตั้งยื่น<strong>บัตรประชาชน</strong> ณ จุดตรวจสอบ</p>
                 </div>
             </div>
 
@@ -254,9 +282,12 @@
             <div class="timeline-step">
                 <div class="step-content">
                     <div class="step-number">2</div>
-                    <i class="fa-solid fa-hand-holding card-icon" style="font-size: 2rem;"></i>
-                    <h3>Receive Ballot</h3>
-                    <p>รับบัตรเลือกตั้งแบบกระดาษ (Physical Ballot) พิมพ์แบบ On-demand เฉพาะบุคคล</p>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-id-card scene-main" style="transform: rotate(-10deg);"></i>
+                        <i class="fa-solid fa-microchip scene-sub" style="top: -10px; right: -10px; color: var(--accent);"></i>
+                    </div>
+                    <h3>ตรวจสอบสิทธิ</h3>
+                    <p>เสียบบัตรประชาชนเข้าเครื่องอ่าน (Smart Card Reader) เพื่อยืนยันตัวตนในระบบ</p>
                 </div>
             </div>
 
@@ -264,9 +295,12 @@
             <div class="timeline-step">
                 <div class="step-content">
                     <div class="step-number">3</div>
-                    <i class="fa-solid fa-box-open card-icon" style="font-size: 2rem;"></i>
-                    <h3>Secure Voting</h3>
-                    <p>กากบาท และหย่อนบัตร 2 ใบลงในตู้ที่มี 2 ช่อง (แยกสีชัดเจน) เพื่อป้องกันความผิดพลาด</p>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-print scene-main"></i>
+                        <i class="fa-solid fa-file scene-sub" style="bottom: -15px; color: #fff;"></i>
+                    </div>
+                    <h3>พิมพ์บัตร On-Demand</h3>
+                    <p>เครื่องพิมพ์ผลิตบัตรเลือกตั้ง 2 ใบ (สีต่างกัน) เฉพาะสำหรับผู้มาใช้สิทธิจริงเท่านั้น</p>
                 </div>
             </div>
 
@@ -274,9 +308,15 @@
             <div class="timeline-step">
                 <div class="step-content">
                     <div class="step-number">4</div>
-                    <i class="fa-solid fa-truck-fast card-icon" style="font-size: 2rem;"></i>
-                    <h3>Centralized Scanning</h3>
-                    <p>หีบบัตรเคลื่อนย้ายไปส่วนกลาง (กทม.) แกะกล่องและนำเข้าเครื่องนับคะแนน High-Speed Scanner & OCR</p>
+                    <div class="visual-scene">
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <div style="width: 40px; height: 50px; background: #ef4444; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color:white;">X</div>
+                            <div style="width: 40px; height: 50px; background: #3b82f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color:white;">9</div>
+                        </div>
+                        <i class="fa-solid fa-pen scene-sub" style="bottom: -5px; right: -20px; color: var(--text-primary);"></i>
+                    </div>
+                    <h3>กากบาทลงคะแนน</h3>
+                    <p>เข้าคูหาและกากบาทหรือเขียนเบอร์ลงในบัตรทั้ง 2 ใบ (แบ่งตามสีประเภทการเลือกตั้ง)</p>
                 </div>
             </div>
 
@@ -284,9 +324,96 @@
             <div class="timeline-step">
                 <div class="step-content">
                     <div class="step-number">5</div>
-                    <i class="fa-solid fa-mobile-screen-button card-icon" style="font-size: 2rem;"></i>
-                    <h3>Real-time Verification</h3>
-                    <p>คะแนนขึ้นหน้าเว็บทันที ประชาชนตรวจสอบผ่าน<strong>แอปทางรัฐ</strong> และสแกน QR Code บนเว็บเพื่อ Verify ความถูกต้องของ Hash</p>
+                    <div class="visual-scene">
+                        <div style="width: 80px; height: 60px; border: 2px solid var(--border); border-radius: 8px; display: flex; overflow: hidden;">
+                            <div style="flex:1; background: rgba(239, 68, 68, 0.2); border-right: 1px solid var(--border);"></div>
+                            <div style="flex:1; background: rgba(59, 130, 246, 0.2);"></div>
+                        </div>
+                        <i class="fa-solid fa-hand-pointer scene-sub" style="top: -20px; transform: rotate(180deg);"></i>
+                    </div>
+                    <h3>หย่อนบัตร 2 สี</h3>
+                    <p>หย่อนบัตรลงในหีบที่มี 2 ช่องชัดเจน โดยแยกช่องตามสีของบัตรป้องกันความสับสน</p>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">6</div>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-truck-moving scene-main" style="color: var(--text-secondary);"></i>
+                        <i class="fa-solid fa-box scene-sub" style="top: -5px; right: 20px; font-size: 1.5rem;"></i>
+                    </div>
+                    <h3>ขนส่งไปส่วนกลาง</h3>
+                    <p>เคลื่อนย้ายหีบบัตรไปยังศูนย์นับคะแนนกลาง ด้วยรถขนส่งที่มีระบบติดตาม GPS</p>
+                </div>
+            </div>
+
+            <!-- Step 7 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">7</div>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-box-open scene-main"></i>
+                        <i class="fa-solid fa-arrow-down scene-sub" style="color: var(--accent);"></i>
+                    </div>
+                    <h3>เข้าเครื่องนับคะแนน</h3>
+                    <p>กรรมการเปิดหีบแกะกล่อง และนำบัตรเข้าเครื่อง High-speed Scanner เพื่ออ่านค่าและบันทึกภาพ</p>
+                </div>
+            </div>
+
+            <!-- Step 8 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">8</div>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-chart-line scene-main" style="color: var(--accent);"></i>
+                        <i class="fa-solid fa-desktop scene-sub" style="right: -15px;"></i>
+                    </div>
+                    <h3>Real-time Dashboard</h3>
+                    <p>ผลคะแนนและภาพบัตรเลือกตั้งถูกแสดงผลขึ้นหน้าจอ Dashboard ทันทีแบบวินาทีต่อวินาที</p>
+                </div>
+            </div>
+
+             <!-- Step 9 -->
+             <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">9</div>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-mobile-screen-button scene-main"></i>
+                        <i class="fa-solid fa-circle-check scene-sub" style="color: var(--accent); top: 0; right: -5px;"></i>
+                    </div>
+                    <h3>แอปทางรัฐแจ้งเตือน</h3>
+                    <p>User ได้รับแจ้งเตือน "ใช้สิทธิสำเร็จ" พร้อมปุ่ม <strong>Scan QR</strong> เพื่อตรวจสอบความถูกต้อง</p>
+                </div>
+            </div>
+
+            <!-- Step 10 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">10</div>
+                    <div class="visual-scene">
+                        <div style="display: flex; gap: 5px; border: 1px solid var(--border); padding: 5px; border-radius: 4px; width: 80px; background: white;">
+                            <div style="flex:1; border-right: 1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold;">X</div>
+                            <div style="flex:1; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-qrcode" style="color:black; font-size: 1rem;"></i></div>
+                        </div>
+                        <i class="fa-solid fa-mobile scene-sub" style="right: -10px; bottom: -10px; color: var(--accent);"></i>
+                    </div>
+                    <h3>Verify My Vote</h3>
+                    <p>นำมือถือสแกน QR Code บน<strong>ภาพบัตรหน้าเว็บ</strong> เทียบกับ Hash ในแอปทางรัฐว่าตรงกันหรือไม่</p>
+                </div>
+            </div>
+
+            <!-- Step 11 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">11</div>
+                    <div class="visual-scene">
+                        <i class="fa-solid fa-laptop-code scene-main"></i>
+                        <i class="fa-solid fa-list-check scene-sub" style="color: var(--accent); bottom: -5px;"></i>
+                    </div>
+                    <h3>Public Audit Status</h3>
+                    <p>หน้าเว็บแสดงสถานะว่าบัตรใบนี้ถูก "Verified Audit" โดยเจ้าของเสียงเรียบร้อยแล้ว (สีเขียว)</p>
                 </div>
             </div>
 
