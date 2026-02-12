@@ -297,10 +297,10 @@
                     <div class="step-number">3</div>
                     <div class="visual-scene">
                         <i class="fa-solid fa-print scene-main"></i>
-                        <i class="fa-solid fa-file scene-sub" style="bottom: -15px; color: #fff;"></i>
+                        <i class="fa-solid fa-ticket scene-sub" style="bottom: -15px; color: #fff;"></i>
                     </div>
-                    <h3>พิมพ์บัตร On-Demand</h3>
-                    <p>เครื่องพิมพ์ผลิตบัตรเลือกตั้ง 2 ใบ (สีต่างกัน) เฉพาะสำหรับผู้มาใช้สิทธิจริงเท่านั้น</p>
+                    <h3>พิมพ์บัตร + หางบัตรลับ</h3>
+                    <p>พิมพ์บัตรพร้อม <strong>"หางบัตร" (Stub)</strong> ที่มีรหัสลับแบบสุ่ม (Random Nonce) ไม่ผูกกับชื่อ เพื่อให้ประชาชนฉีกเก็บไว้</p>
                 </div>
             </div>
 
@@ -397,10 +397,10 @@
                             <div style="flex:1; border-right: 1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold; font-family: 'Prompt'; font-size: 1.2rem;">9</div>
                             <div style="flex:1; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-qrcode" style="color:black; font-size: 1rem;"></i></div>
                         </div>
-                        <i class="fa-solid fa-mobile scene-sub" style="right: -10px; bottom: -10px; color: var(--accent);"></i>
+                        <i class="fa-solid fa-ticket scene-sub" style="right: -10px; bottom: -10px; color: var(--accent);"></i>
                     </div>
-                    <h3>Verify My Vote</h3>
-                    <p>นำมือถือสแกน QR Code บน<strong>ภาพบัตรหน้าเว็บ</strong> เทียบกับ Hash ในแอปทางรัฐว่าตรงกันหรือไม่</p>
+                    <h3>Verify with Paper Stub</h3>
+                    <p>สแกน QR Code บน <strong>"หางบัตร"</strong> ที่เก็บไว้ เพื่อตรวจสอบว่ารหัสลับของตนถูกนับคะแนนถูกต้องหรือไม่ (โดยระบบไม่รู้ว่าเป็นคุณ)</p>
                 </div>
             </div>
 
@@ -428,7 +428,7 @@
                 <ul class="resource-list">
                     <li>
                         <strong>Ballot Printer Kiosk</strong><br>
-                        เครื่องพิมพ์บัตรที่มี Algorithm สร้าง Hash ผูกกับ User ID (ทำงานเบื้องหลัง) ป้องกันบัตรเขย่ง
+                        เครื่องพิมพ์บัตรที่มีระบบ <strong>Random Nonce Generator</strong> สร้างรหัสลับที่ไม่ผูกกับตัวตน แต่มีคู่ฉบับบนหางบัตร
                     </li>
                     <li>
                         <strong>High-Speed Scanner & Counter</strong><br>
@@ -440,7 +440,7 @@
                     </li>
                     <li>
                         <strong>Transparency Server</strong><br>
-                        ระบบฐานข้อมูลกลางที่เปิดให้ประชาชน Query ข้อมูลภาพบัตรเลือกตั้งของตนเองได้ตลอดเวลา
+                        ระบบเปิดให้ตรวจสอบสถานะของ <strong>"รหัสบนหางบัตร"</strong> แบบ Anonymous โดยไม่ต้อง Login ยืนยันตัวตน
                     </li>
                 </ul>
             </div>
