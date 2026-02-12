@@ -3,453 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election System Design Canvas (Full Screen)</title>
+    <title>Election System Design Canvas</title>
     <!-- Import Thai Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* === DARK THEME & FULL SCREEN SETUP === */
-        * { box-sizing: border-box; }
-        
+        /* === THEME VARIABLES === */
         :root {
             --bg-dark: #0f172a;
             --bg-card: #1e293b;
-            --bg-card-hover: #334155;
-            --text-primary: #f1f5f9;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent: #34d399; /* Emerald 400 for better contrast on dark */
+            --accent: #34d399; /* Emerald 400 */
+            --accent-glow: rgba(52, 211, 153, 0.2);
             --border: #334155;
+            --timeline-line: #334155;
         }
 
+        /* === RESET & BASE === */
+        * { box-sizing: border-box; }
         body { 
-            margin: 0; 
-            padding: 0; 
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            font-family: 'Sarabun', sans-serif; 
-            overflow-x: hidden;
-            
-            /* Enable Scroll Snap */
-            scroll-snap-type: y mandatory;
-            height: 100vh;
-            overflow-y: scroll;
+            margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-primary);
+            font-family: 'Sarabun', sans-serif; overflow-x: hidden;
         }
-        
-        .slide-container {
-            width: 100vw;
-            height: 100vh;
-            background-color: var(--bg-dark);
-            position: relative;
+
+        /* === TYPOGRAPHY === */
+        h1, h2, h3, h4 { font-family: 'Prompt', sans-serif; margin: 0; }
+        h1 { font-size: 4rem; line-height: 1.1; font-weight: 700; background: linear-gradient(to right, #34d399, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 2.5rem; margin-bottom: 30px; border-left: 6px solid var(--accent); padding-left: 20px; }
+        h3 { font-size: 1.5rem; color: var(--accent); margin-bottom: 10px; }
+        p, li { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); }
+        strong { color: var(--text-primary); }
+
+        /* === LAYOUT CONTAINERS === */
+        .section-container {
+            min-height: 100vh;
+            width: 100%;
+            padding: 60px 80px;
             display: flex;
             flex-direction: column;
-            padding: 40px 80px;
-            overflow: hidden;
-            scroll-snap-align: start;
+            justify-content: center;
             border-bottom: 1px solid var(--border);
+            position: relative;
         }
 
-        /* BACKGROUND DECORATION */
-        .bg-blob {
-            position: absolute;
-            width: 50vw;
-            height: 50vw;
-            background: radial-gradient(circle, rgba(52, 211, 153, 0.15) 0%, rgba(15, 23, 42, 0.0) 70%);
-            border-radius: 50%;
-            z-index: 0;
-            filter: blur(80px);
-            pointer-events: none;
-        }
-        .bg-blob-1 { top: -20%; right: -20%; }
-        .bg-blob-2 { bottom: -20%; left: -20%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
 
-        /* TYPOGRAPHY */
-        h1, h2, h3, h4 { font-family: 'Prompt', sans-serif; color: var(--text-primary); margin: 0; }
-        h1 { font-size: 5vw; line-height: 1.1; font-weight: 700; color: var(--accent); text-shadow: 0 0 30px rgba(52, 211, 153, 0.2); }
-        
-        .slide-title { 
-            font-size: 3vw; 
-            font-weight: 600; 
-            margin-bottom: 3vh; 
-            text-align: left; 
-            position: relative; 
-            z-index: 2; 
-            border-left: 8px solid var(--accent); 
-            padding-left: 20px;
-            color: var(--text-primary);
-        }
-        
-        p, li { font-size: 1.5vw; line-height: 1.6; color: var(--text-secondary); }
-        .accent-text { color: var(--accent); font-weight: 700; }
-
-        .content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; width: 100%; }
-
-        /* LAYOUTS */
-        .title-layout { text-align: center; height: 100%; justify-content: center; display: flex; flex-direction: column; align-items: center; }
-        .title-layout h1 { margin-bottom: 20px; }
-        .title-layout .subtitle { font-size: 1.8vw; max-width: 80%; }
-
-        .tiled-content { display: flex; gap: 30px; width: 100%; height: 60%; }
-        .tile { 
-            flex: 1; 
-            background: var(--bg-card); 
-            padding: 3vw; 
-            border-radius: 20px; 
-            border: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center;
-            transition: transform 0.3s ease;
-        }
-        .tile:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .tile i { font-size: 4vw; color: var(--accent); margin-bottom: 20px; }
-        .tile h3 { font-size: 2vw; margin-bottom: 15px; }
-
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; width: 100%; height: 100%; }
-        .image-wrapper { 
-            border-radius: 24px; 
-            overflow: hidden; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); 
-            height: 50vh; 
-            background: var(--bg-card); 
+        /* === CARDS === */
+        .card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+            border-radius: 16px;
+            padding: 30px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            height: 100%;
         }
-        .image-wrapper i { font-size: 10vw; color: var(--text-secondary); opacity: 0.5; }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+        .card-icon { font-size: 3rem; color: var(--accent); margin-bottom: 20px; display: inline-block; }
 
-        /* === DIAGRAM STYLES === */
-        .swimlane-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1vw;
-            width: 100%;
-            height: 60vh;
+        /* === TIMELINE (NEW FLOW DESIGN) === */
+        .timeline-wrapper {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        
+        /* The Line */
+        .timeline-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--timeline-line);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 60px;
+            width: 50%;
+            padding: 0 40px;
+        }
+
+        .timeline-step:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-step:nth-child(even) { left: 50%; text-align: left; }
+
+        /* The Dot */
+        .timeline-step::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-dark);
+            border: 4px solid var(--accent);
+            border-radius: 50%;
+            top: 20px;
+            z-index: 2;
+        }
+        .timeline-step:nth-child(odd)::after { right: -12px; }
+        .timeline-step:nth-child(even)::after { left: -12px; }
+
+        /* Step Content */
+        .step-content {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -15px;
+            background: var(--accent);
+            color: var(--bg-dark);
+            font-weight: bold;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-family: 'Prompt';
         }
-        .swimlane-col {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 12px;
-            border: 1px dashed var(--border);
-            padding: 1vw;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .swimlane-header {
-            font-weight: bold;
-            margin-bottom: 2vh;
-            color: var(--accent);
-            font-size: 1.2vw;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .process-box {
-            background: var(--bg-card);
-            padding: 1.5vh;
-            border-radius: 8px;
-            font-size: 1.2vw;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
-            width: 90%;
-            margin-bottom: 3vh;
-            border-left: 5px solid var(--accent);
-            color: var(--text-primary);
+        .timeline-step:nth-child(odd) .step-number { right: 20px; }
+        .timeline-step:nth-child(even) .step-number { left: 20px; }
+
+        /* === RESOURCES LIST === */
+        .resource-list { list-style: none; padding: 0; }
+        .resource-list li {
+            margin-bottom: 20px;
+            padding-left: 40px;
             position: relative;
         }
-        
-        /* Activity Flow */
-        .flow-container { display: flex; justify-content: center; align-items: center; gap: 2vw; margin-top: 2vh; }
-        .flow-step {
-            width: 18vw; 
-            background: var(--bg-card); 
-            border: 2px solid var(--border); 
-            border-radius: 15px; 
-            padding: 2vh; 
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        .resource-list li::before {
+            content: '\f00c'; /* FontAwesome Check */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 1.2rem;
+            top: 2px;
         }
-        .flow-step h4 { color: var(--accent); font-size: 1.5vw; margin-bottom: 5px; }
-        .flow-step p { font-size: 1vw; color: var(--text-secondary); margin: 0; }
-        .flow-arrow { font-size: 2vw; color: var(--text-secondary); }
-
-        /* Custom Override for Flow Step Reverse Colors in Dark Mode */
-        .flow-step.reverse-step { background: rgba(52, 211, 153, 0.1) !important; border-color: var(--accent) !important; }
-
-        .verif-number { font-size: 15vw; font-weight: 700; color: var(--accent); line-height: 1; font-family: 'Prompt'; }
 
         /* === MOBILE RESPONSIVE === */
-        @media (max-width: 768px) {
-            body, .slide-container {
-                height: auto;
-                min-height: 100vh;
-                overflow-y: visible;
-                display: block;
-                scroll-snap-type: none; /* Disable snap on mobile for better flow */
+        @media (max-width: 900px) {
+            .section-container { padding: 40px 20px; height: auto; min-height: auto; }
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.8rem; border-left-width: 4px; padding-left: 15px; }
+            .grid-3, .grid-2 { grid-template-columns: 1fr; gap: 30px; }
+            
+            /* Mobile Timeline Fix - Transform to Vertical List */
+            .timeline-wrapper::before { left: 20px; } /* Verification Line to left */
+            
+            .timeline-step {
+                width: 100%;
+                left: 0;
+                padding-left: 60px; /* Space for line */
+                padding-right: 0;
+                text-align: left; /* Reset alignment */
+                margin-bottom: 40px;
             }
-            .slide-container {
-                padding: 40px 20px;
-                min-height: auto;
-                border-bottom: 1px solid var(--border);
-            }
             
-            /* Typography Scaling */
-            h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
-            .title-layout .subtitle { font-size: 1rem; max-width: 100%; }
-            .slide-title { font-size: 1.8rem; border-left-width: 5px; padding-left: 15px; margin-bottom: 2rem; }
-            p, li { font-size: 1rem; }
+            .timeline-step:nth-child(odd), .timeline-step:nth-child(even) { left: 0; text-align: left; }
             
-            .tiled-content { flex-direction: column; height: auto; display: block; }
-            .tile { margin-bottom: 20px; padding: 30px; }
-            .tile i { font-size: 3rem; }
-            .tile h3 { font-size: 1.3rem; }
+            /* Dot Position Fix */
+            .timeline-step::after { left: 9px; right: auto; } 
+            .timeline-step:nth-child(odd)::after { left: 9px; right: auto; }
 
-            .two-column { display: flex; flex-direction: column; gap: 30px; height: auto; }
-            .image-wrapper { height: 250px; width: 100%; }
-            .image-wrapper i { font-size: 4rem; }
-
-            /* Diagram Mobile Fixes */
-            .swimlane-container { display: flex; flex-direction: column; height: auto; gap: 20px; }
-            .swimlane-col { width: 100%; min-height: auto; padding: 20px; }
-            .swimlane-header { font-size: 1.2rem; margin-bottom: 15px; }
-            
-            /* Reset inline margins for mobile flow */
-            .process-box { 
-                width: 100%; 
-                margin-top: 10px !important; 
-                margin-bottom: 10px !important;
-                font-size: 1rem;
-                padding: 15px;
-            }
-            .swimlane-col > div[style*="height"] { display: none; } /* Hide spacers */
-
-            .flow-container { flex-direction: column; gap: 15px; }
-            .flow-step { width: 100%; padding: 20px; }
-            .flow-step h4 { font-size: 1.2rem; }
-            .flow-step p { font-size: 0.9rem; }
-            .flow-arrow { transform: rotate(90deg); margin: 5px 0; font-size: 1.5rem; }
-            
-            /* Fix reverse flow container on mobile */
-            .flow-container[style*="row-reverse"] { flex-direction: column; }
-            .flow-container[style*="row-reverse"] .flow-arrow { transform: rotate(270deg); }
-
-            .verif-number { font-size: 6rem; text-align: center; margin-bottom: 20px; }
-            #slide8 .content-area > div { display: flex; flex-direction: column; text-align: center; }
+            .timeline-step .step-number { left: -10px; top: -10px; } /* Visual fix relative to card */
         }
-
+        
+        .bg-gradient {
+             background: radial-gradient(circle at top right, rgba(52, 211, 153, 0.1), transparent 40%);
+        }
     </style>
 </head>
 <body>
 
-<!-- Slide 1: Title -->
-<div class="slide-container" id="slide1">
-    <div class="bg-blob bg-blob-1"></div>
-    <div class="bg-blob bg-blob-2"></div>
-    <div class="title-layout">
-        <div style="background: var(--accent); color: #0f172a; padding: 8px 30px; border-radius: 50px; font-weight: 700; margin-bottom: 30px; letter-spacing: 2px; font-size: 1rem; text-transform: uppercase;">Canvas Design</div>
-        <h1>ระบบการเลือกตั้งที่โปร่งใส<br>และตรวจสอบได้</h1>
-        <p class="subtitle">Trustless & Traceable Election System Framework<br>เปลี่ยนจาก "ความเชื่อใจ" เป็น "คณิตศาสตร์" ให้ประชาชนเป็นผู้ตรวจสอบ</p>
+    <!-- 1. Intro -->
+    <div class="section-container bg-gradient">
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <div style="display: inline-block; background: rgba(52, 211, 153, 0.1); color: var(--accent); padding: 8px 16px; border-radius: 50px; font-weight: 700; margin-bottom: 24px; font-size: 0.9rem;">ELECTION DESIGN CANVAS</div>
+            <h1>ระบบการเลือกตั้งที่โปร่งใส<br>และตรวจสอบได้</h1>
+            <p style="font-size: 1.5rem; margin-top: 24px; color: var(--text-secondary);">Trustless & Traceable Election System Framework</p>
+            <p style="margin-top: 10px;">เปลี่ยนจาก "ความเชื่อใจ" เป็น "คณิตศาสตร์" ให้ประชาชนเป็นผู้ตรวจสอบ</p>
+        </div>
     </div>
-</div>
 
-<!-- Slide 2: Value Propositions -->
-<div class="slide-container" id="slide2">
-    <h2 class="slide-title">คุณค่าหลัก (Value Propositions)</h2>
-    <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <i class="fa-solid fa-shield-halved"></i>
-                <h3>ไม่ต้องเชื่อใจใคร (Trustless)</h3>
-                <p>ไม่ต้องพึ่งพาความซื่อสัตย์ของเจ้าหน้าที่ กกต. แต่เชื่อมั่นในรหัสลับ (Hash) และหลักฐานในมือคุณเอง</p>
+    <!-- 2. Value Propositions -->
+    <div class="section-container">
+        <h2>1. คุณค่าหลัก (Value Propositions)</h2>
+        <div class="grid-3">
+            <div class="card">
+                <i class="fa-solid fa-file-code card-icon"></i>
+                <h3>Trustless Verification</h3>
+                <p>ไม่ต้องเชื่อใจ กกต. หรือคนนับคะแนน แต่เชื่อมั่นใน <strong>Mathematics (Hash)</strong> และหลักฐานดิจิทัลที่อยู่ในมือคุณเอง</p>
             </div>
-            <div class="tile">
-                <i class="fa-solid fa-users-viewfinder"></i>
-                <h3>ทุกคนคือผู้ตรวจสอบ (Auditor)</h3>
-                <p>ประชาชนทุกคนช่วยกันจับโกงได้ หากพบความผิดปกติแม้แต่ใบเดียว สามารถนำไปสู่การเลือกตั้งใหม่ได้</p>
+            <div class="card">
+                <i class="fa-solid fa-users-viewfinder card-icon"></i>
+                <h3>Crowd-Sourced Fraud Detection</h3>
+                <p>ประชาชนทุกคนคือผู้ตรวจสอบ (Auditor) หากพบความผิดปกติแม้แต่ใบเดียว สามารถนำไปสู่การร้องเรียนเพื่อเลือกตั้งใหม่ได้</p>
             </div>
-            <div class="tile">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-                <h3>ตรวจสอบเส้นทางได้ (Traceable)</h3>
-                <p>เห็นเส้นทางของคะแนนตั้งแต่หย่อนบัตร จนถึงการสแกนและขึ้นโชว์บนหน้าจอ แบบ End-to-End</p>
+            <div class="card">
+                <i class="fa-solid fa-route card-icon"></i>
+                <h3>Full Traceability</h3>
+                <p>ตรวจสอบเส้นทางของคะแนนได้ตั้งแต่หย่อนบัตร ย้ายหีบ แกะกล่อง จนถึงการสแกนและแสดงผลบนหน้าจอ</p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Slide 3: Sequence Diagram -->
-<div class="slide-container" id="slide3">
-    <h2 class="slide-title">ภาพรวมการทำงาน (System Sequence)</h2>
-    <div class="content-area">
-        <div class="swimlane-container">
-            <!-- Lane 1 -->
-            <div class="swimlane-col">
-                <div class="swimlane-header"><i class="fa-solid fa-user"></i> ประชาชน</div>
-                <div class="process-box" style="margin-top: 5vh;">1. ยืนยันตัวตน</div>
-                <div class="process-box" style="margin-top: 8vh;">3. กากบาท & หย่อนบัตร</div>
-                <div class="process-box" style="margin-top: 8vh;">5. ตรวจสอบแอป</div>
+    <!-- 3. Key Activities (The FLOW) -->
+    <div class="section-container">
+        <h2>2. ขั้นตอนการเลือกตั้ง (Key Activities)</h2>
+        <div class="timeline-wrapper">
+            
+            <!-- Step 1 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">1</div>
+                    <i class="fa-solid fa-id-card card-icon" style="font-size: 2rem;"></i>
+                    <h3>User Identification</h3>
+                    <p>ยืนยันตัวตนด้วยบัตรประชาชน เพื่อตรวจสอบสิทธิ ณ หน่วยเลือกตั้ง</p>
+                </div>
             </div>
-            <!-- Lane 2 -->
-            <div class="swimlane-col">
-                <div class="swimlane-header"><i class="fa-solid fa-mobile-screen"></i> Kiosk / แอป</div>
-                <div class="process-box" style="margin-top: 5vh; border-color: #3b82f6;">สร้าง Hash ID</div>
-                <div class="process-box" style="border-color: #3b82f6;">2. พิมพ์บัตรเลือกตั้ง</div>
-            </div>
-            <!-- Lane 3 -->
-            <div class="swimlane-col">
-                <div class="swimlane-header"><i class="fa-solid fa-print"></i> ศูนย์นับคะแนน</div>
-                <div style="height: 30vh;"></div>
-                <div class="process-box" style="border-color: #f59e0b;">4. สแกนบัตร (OCR)</div>
-            </div>
-            <!-- Lane 4 -->
-            <div class="swimlane-col">
-                <div class="swimlane-header"><i class="fa-solid fa-server"></i> ระบบกลาง</div>
-                <div style="height: 40vh;"></div>
-                <div class="process-box" style="border-color: #ef4444;">6. แสดงผลตรวจสอบ</div>
-            </div>
-        </div>
-        <p style="text-align: center; margin-top: 2vh; color: var(--text-secondary); font-size: 1rem;">แผนภาพแสดงการไหลของข้อมูลระหว่างผู้ใช้และระบบในแต่ละขั้นตอน</p>
-    </div>
-</div>
 
-<!-- Slide 4: Activity Flow -->
-<div class="slide-container" id="slide4">
-    <h2 class="slide-title">เส้นทางการเดินทางของบัตร (Activity Flow)</h2>
-    <div class="content-area">
-        <div class="flow-container">
-            <div class="flow-step">
-                <h4>1. ยืนยันตัวตน</h4>
-                <p>ที่ตู้ Kiosk</p>
+            <!-- Step 2 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">2</div>
+                    <i class="fa-solid fa-hand-holding card-icon" style="font-size: 2rem;"></i>
+                    <h3>Receive Ballot</h3>
+                    <p>รับบัตรเลือกตั้งแบบกระดาษ (Physical Ballot) พิมพ์แบบ On-demand เฉพาะบุคคล</p>
+                </div>
             </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step">
-                <h4>2. รับบัตร & Hash</h4>
-                <p>พิมพ์ใบต่อใบ</p>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step">
-                <h4>3. กากบาท</h4>
-                <p>ลงคะแนนจริง</p>
-            </div>
-        </div>
-        
-        <div style="text-align: center; margin: 2vh 0;"><i class="fa-solid fa-arrow-down" style="font-size: 3vw; color: var(--border);"></i></div>
 
-        <div class="flow-container" style="flex-direction: row-reverse;">
-            <div class="flow-step reverse-step">
-                <h4>6. ตรวจสอบ</h4>
-                <p>เช็คภาพบัตรตัวเอง</p>
+            <!-- Step 3 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">3</div>
+                    <i class="fa-solid fa-box-open card-icon" style="font-size: 2rem;"></i>
+                    <h3>Secure Voting</h3>
+                    <p>กากบาท และหย่อนบัตร 2 ใบลงในตู้ที่มี 2 ช่อง (แยกสีชัดเจน) เพื่อป้องกันความผิดพลาด</p>
+                </div>
             </div>
-            <div class="flow-arrow">←</div>
-            <div class="flow-step reverse-step">
-                <h4>5. อัปโหลด</h4>
-                <p>ขึ้น Cloud สาธารณะ</p>
+
+            <!-- Step 4 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">4</div>
+                    <i class="fa-solid fa-truck-fast card-icon" style="font-size: 2rem;"></i>
+                    <h3>Centralized Scanning</h3>
+                    <p>หีบบัตรเคลื่อนย้ายไปส่วนกลาง (กทม.) แกะกล่องและนำเข้าเครื่องนับคะแนน High-Speed Scanner & OCR</p>
+                </div>
             </div>
-            <div class="flow-arrow">←</div>
-            <div class="flow-step reverse-step">
-                <h4>4. สแกน (OCR)</h4>
-                <p>แปลงเป็นไฟล์ภาพ</p>
+
+            <!-- Step 5 -->
+            <div class="timeline-step">
+                <div class="step-content">
+                    <div class="step-number">5</div>
+                    <i class="fa-solid fa-mobile-screen-button card-icon" style="font-size: 2rem;"></i>
+                    <h3>Real-time Verification</h3>
+                    <p>คะแนนขึ้นหน้าเว็บทันที ประชาชนตรวจสอบผ่าน<strong>แอปทางรัฐ</strong> และสแกน QR Code บนเว็บเพื่อ Verify ความถูกต้องของ Hash</p>
+                </div>
             </div>
+
         </div>
     </div>
-</div>
 
-<!-- Slide 5: Kiosk Resource -->
-<div class="slide-container" id="slide5">
-    <h2 class="slide-title">ทรัพยากรหลัก: ตู้พิมพ์บัตร (Kiosk)</h2>
-    <div class="content-area">
-        <div class="two-column">
+    <!-- 4. Key Resources -->
+    <div class="section-container">
+        <h2>3. ทรัพยากรหลัก (Key Resources)</h2>
+        <div class="grid-2">
             <div>
-                <h3>แก้ปัญหา "บัตรเขย่ง"</h3>
-                <p>ตู้ Kiosk จะพิมพ์บัตรเลือกตั้งออกมาก็ต่อเมื่อมีผู้มีสิทธิตัวจริงมายืนยันตัวตนเท่านั้น</p>
-                <ul style="margin-top: 20px;">
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:var(--accent); margin-right: 10px;"></i> <strong>On-demand:</strong> ไม่มีการพิมพ์ทิ้งไว้</li>
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:var(--accent); margin-right: 10px;"></i> <strong>Unique Hash:</strong> สร้างรหัสลับเฉพาะตัว</li>
-                    <li><i class="fa-solid fa-check-circle" style="color:var(--accent); margin-right: 10px;"></i> <strong>Real-time DB:</strong> เช็คสิทธิทันที</li>
+                <ul class="resource-list">
+                    <li>
+                        <strong>Ballot Printer Kiosk</strong><br>
+                        เครื่องพิมพ์บัตรที่มี Algorithm สร้าง Hash ผูกกับ User ID (ทำงานเบื้องหลัง) ป้องกันบัตรเขย่ง
+                    </li>
+                    <li>
+                        <strong>High-Speed Scanner & Counter</strong><br>
+                        เครื่องนับคะแนนความเร็วสูง อ่านค่า OCR และบันทึกภาพดิจิทัลความละเอียดสูงพร้อมกัน
+                    </li>
+                    <li>
+                        <strong>"Thang Rat" Super App</strong><br>
+                        โครงสร้างพื้นฐานดิจิทัลเชื่อมต่อฐานข้อมูลประชาชน ใช้สำหรับตรวจสอบสถานะการเลือกตั้งส่วนบุคคล
+                    </li>
+                    <li>
+                        <strong>Transparency Server</strong><br>
+                        ระบบฐานข้อมูลกลางที่เปิดให้ประชาชน Query ข้อมูลภาพบัตรเลือกตั้งของตนเองได้ตลอดเวลา
+                    </li>
                 </ul>
             </div>
-            <div class="image-wrapper">
-                <i class="fa-solid fa-print"></i>
+            <div style="background: #111827; padding: 40px; border-radius: 20px; text-align: center; border: 1px dashed var(--border);">
+                <i class="fa-solid fa-server" style="font-size: 8rem; color: #334155;"></i>
+                <p style="margin-top: 20px;">Secure Infrastructure</p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Slide 6: Scanner Resource -->
-<div class="slide-container" id="slide6">
-    <h2 class="slide-title">ทรัพยากรหลัก: สแกนเนอร์ความเร็วสูง</h2>
-    <div class="content-area">
-        <div class="two-column">
+    <!-- 5. Channels & Relationships -->
+    <div class="section-container">
+        <div class="grid-2">
             <div>
-                <h3>เปลี่ยนกระดาษเป็นดิจิทัล</h3>
-                <p>High-speed scanners และระบบ OCR จะทำหน้าที่เปลี่ยนบัตรเลือกตั้งให้กลายเป็นหลักฐานดิจิทัลที่แก้ไขไม่ได้</p>
-                <ul style="margin-top: 20px;">
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-bolt" style="color:var(--accent); margin-right: 10px;"></i> <strong>Massive Throughput:</strong> สแกนได้เร็วสูง</li>
-                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-font" style="color:var(--accent); margin-right: 10px;"></i> <strong>OCR Technology:</strong> อ่านลายมืออัตโนมัติ</li>
-                    <li><i class="fa-solid fa-cloud-upload" style="color:var(--accent); margin-right: 10px;"></i> <strong>Instant Upload:</strong> ส่งข้อมูลขึ้นเว็บทันที</li>
-                </ul>
+                <h2>4. ช่องทาง (Channels)</h2>
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3><i class="fa-solid fa-building"></i> On-Site</h3>
+                    <p>หน่วยเลือกตั้งทั่วประเทศ สำหรับการยืนยันตัวตนและลงคะแนนแบบกระดาษ</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fa-solid fa-globe"></i> Digital Platform</h3>
+                    <p>เว็บกลางแสดงบัตรเลือกตั้งทั้งหมด (Public) และแอปทางรัฐ (Private) สำหรับยืนยันความเป็นเจ้าของ</p>
+                </div>
             </div>
-            <div class="image-wrapper">
-                <i class="fa-solid fa-barcode"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 7: App Channel -->
-<div class="slide-container" id="slide7">
-    <div class="content-area">
-        <div class="two-column">
             <div>
-                <h2 class="slide-title" style="border:none; padding:0; margin-bottom: 20px;">ช่องทาง: แอป "ทางรัฐ"</h2>
-                <p>แอปพลิเคชันทำหน้าที่เป็น <span class="accent-text">Secure Wallet</span> สำหรับประชาชน</p>
-                <p style="margin-top: 20px;">ใช้เก็บ "รหัส Hash ID" และ "ใบรับรองการเลือกตั้ง" เพื่อใช้ยืนยันว่าคุณไปใช้สิทธิแล้ว และใช้ตรวจสอบความถูกต้องของคะแนนภายหลัง</p>
-            </div>
-            <div class="image-wrapper">
-                 <i class="fa-solid fa-mobile-button" style="color: var(--accent);"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 8: Verification Power -->
-<div class="slide-container" id="slide8">
-    <h2 class="slide-title">พลังแห่งการตรวจสอบ (Verification)</h2>
-    <div class="content-area">
-        <div style="display: flex; align-items: center; gap: 5vw; justify-content: center;">
-            <div class="verif-number">100%</div>
-            <div>
-                <h3>ตรวจสอบด้วยตาตัวเอง</h3>
-                <p>คุณไม่ต้องถามเจ้าหน้าที่ว่า "คะแนนถูกนับไหม?"</p>
-                <p>แต่คุณสามารถ <strong>"เห็นภาพบัตรที่คุณกากบาทด้วยมือตัวเอง"</strong> บนหน้าจอได้เลย</p>
-                <div style="margin-top: 30px; padding: 2vw; background: rgba(52, 211, 153, 0.1); border-radius: 10px; border-left: 0.5vw solid var(--accent); color: var(--text-primary);">
-                    <strong>Empowerment:</strong> คืนอำนาจให้ประชาชนเป็นเจ้าของคะแนนเสียงอย่างแท้จริง
+                <h2>5. ความสัมพันธ์ (Customer Relationships)</h2>
+                <div class="card" style="border-color: var(--accent); background: rgba(52, 211, 153, 0.05);">
+                    <i class="fa-solid fa-hand-fist card-icon"></i>
+                    <h3>Empowerment</h3>
+                    <p>คืนอำนาจให้ประชาชน "เป็นเจ้าของ" คะแนนเสียงอย่างแท้จริง</p>
+                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+                    <h3>Direct Feedback Loop</h3>
+                    <p>หากสแกน QR แล้วข้อมูลบนเว็บไม่ตรงกับในมือถือ สามารถกด Report แจ้ง กกต. ผ่านแอปได้ทันที</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Slide 9: Crowd Sourcing -->
-<div class="slide-container" id="slide9">
-    <h2 class="slide-title">ช่วยกันจับโกง (Crowd-Sourced Fraud Detection)</h2>
-    <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <i class="fa-solid fa-users"></i>
-                <h3>Public Auditor Network</h3>
-                <p>เมื่อข้อมูลบัตรทุกใบถูกเปิดเผย ประชาชนนับล้านคนจะช่วยกันเป็นตา (Auditor) ทำให้การโกงเป็นเรื่องที่เป็นไปไม่ได้</p>
-            </div>
-            <div class="tile">
-                <i class="fa-solid fa-bullhorn"></i>
-                <h3>Real-Time Accountability</h3>
-                <p>หากพบความผิดปกติแม้แต่จุดเดียว ระบบจะเปิดให้กด Report เพื่อนำไปสู่การตรวจสอบทันที</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>
