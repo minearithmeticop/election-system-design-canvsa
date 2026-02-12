@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election System Design Canvas (Full Screen)</title>
+    <!-- Import Thai Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* === FULL SCREEN FIXES === */
+        * { box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #0f172a; /* Dark background behind slides */
+            font-family: 'Sarabun', sans-serif; 
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            
+            /* Enable Scroll Snap for presentation feel */
+            scroll-snap-type: y mandatory;
+            height: 100vh;
+            overflow-y: scroll;
+        }
+        
+        .slide-container {
+            /* FORCE FULL SCREEN */
+            width: 100vw;
+            height: 100vh;
+            
+            background-color: #ffffff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 80px; /* Internal padding */
+            overflow: hidden; /* Hide overflow content */
+            
+            /* Snap alignment */
+            scroll-snap-align: start;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* BACKGROUND DECORATION */
+        .bg-blob {
+            position: absolute;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            filter: blur(60px);
+            pointer-events: none;
+        }
+        .bg-blob-1 { top: -20%; right: -20%; }
+        .bg-blob-2 { bottom: -20%; left: -20%; }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3 { font-family: 'Prompt', sans-serif; color: #0f172a; margin: 0; }
+        h1 { font-size: 5vw; line-height: 1.1; font-weight: 700; color: #10b981; } /* Responsive Font Size */
+        .slide-title { font-size: 3vw; font-weight: 600; margin-bottom: 3vh; text-align: left; position: relative; z-index: 2; border-left: 8px solid #10b981; padding-left: 20px; }
+        p, li { font-size: 1.5vw; line-height: 1.6; color: #475569; }
+        .accent-text { color: #10b981; font-weight: 700; }
+
+        .content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; width: 100%; }
+
+        /* LAYOUTS */
+        .title-layout { text-align: center; height: 100%; justify-content: center; display: flex; flex-direction: column; align-items: center; }
+        .title-layout h1 { margin-bottom: 20px; }
+        .title-layout .subtitle { font-size: 1.8vw; max-width: 80%; }
+
+        .tiled-content { display: flex; gap: 30px; width: 100%; height: 60%; }
+        .tile { flex: 1; background: #f8fafc; padding: 3vw; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; }
+        .tile i { font-size: 4vw; color: #10b981; margin-bottom: 20px; }
+        .tile h3 { font-size: 2vw; margin-bottom: 15px; }
+
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; width: 100%; height: 100%; }
+        .image-wrapper { 
+            border-radius: 24px; 
+            overflow: hidden; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
+            height: 60vh; 
+            background: #f1f5f9; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .image-wrapper i { font-size: 10vw; color: #cbd5e1; }
+
+        /* === DIAGRAM STYLES === */
+        .swimlane-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1vw;
+            width: 100%;
+            height: 60vh;
+            font-family: 'Prompt';
+        }
+        .swimlane-col {
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            padding: 1vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .swimlane-header {
+            font-weight: bold;
+            margin-bottom: 2vh;
+            color: #10b981;
+            font-size: 1.2vw;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .process-box {
+            background: white;
+            padding: 1.5vh;
+            border-radius: 8px;
+            font-size: 1.2vw;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            width: 90%;
+            margin-bottom: 3vh;
+            border-left: 5px solid #10b981;
+            position: relative;
+        }
+        
+        /* Activity Flow */
+        .flow-container { display: flex; justify-content: center; align-items: center; gap: 2vw; margin-top: 2vh; }
+        .flow-step {
+            width: 18vw; background: white; border: 2px solid #e2e8f0; border-radius: 15px; padding: 2vh; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .flow-step h4 { color: #10b981; font-size: 1.5vw; margin-bottom: 5px; }
+        .flow-step p { font-size: 1vw; color: #64748b; margin: 0; }
+        .flow-arrow { font-size: 2vw; color: #cbd5e1; }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            .slide-container { padding: 20px; height: auto; min-height: 100vh; }
+            h1 { font-size: 10vw; }
+            .slide-title { font-size: 8vw; }
+            p, li { font-size: 4vw; }
+            .tiled-content { flex-direction: column; height: auto; }
+            .two-column { grid-template-columns: 1fr; gap: 30px; }
+            .image-wrapper { height: 300px; }
+            .swimlane-container { display: flex; flex-direction: column; height: auto; }
+            .flow-container { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide-container" id="slide1">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="title-layout">
+        <div style="background: #10b981; color: white; padding: 0.5vw 2vw; border-radius: 50px; font-weight: 700; margin-bottom: 30px; letter-spacing: 2px; font-size: 1vw;">CANVAS DESIGN</div>
+        <h1>ระบบการเลือกตั้งที่โปร่งใส<br>และตรวจสอบได้</h1>
+        <p class="subtitle">Trustless & Traceable Election System Framework<br>เปลี่ยนจาก "ความเชื่อใจ" เป็น "คณิตศาสตร์" ให้ประชาชนเป็นผู้ตรวจสอบ</p>
+    </div>
+</div>
+
+<!-- Slide 2: Value Propositions -->
+<div class="slide-container" id="slide2">
+    <h2 class="slide-title">คุณค่าหลัก (Value Propositions)</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+            <div class="tile">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>ไม่ต้องเชื่อใจใคร (Trustless)</h3>
+                <p>ไม่ต้องพึ่งพาความซื่อสัตย์ของเจ้าหน้าที่ กกต. แต่เชื่อมั่นในรหัสลับ (Hash) และหลักฐานในมือคุณเอง</p>
+            </div>
+            <div class="tile">
+                <i class="fa-solid fa-users-viewfinder"></i>
+                <h3>ทุกคนคือผู้ตรวจสอบ (Auditor)</h3>
+                <p>ประชาชนทุกคนช่วยกันจับโกงได้ หากพบความผิดปกติแม้แต่ใบเดียว สามารถนำไปสู่การเลือกตั้งใหม่ได้</p>
+            </div>
+            <div class="tile">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                <h3>ตรวจสอบเส้นทางได้ (Traceable)</h3>
+                <p>เห็นเส้นทางของคะแนนตั้งแต่หย่อนบัตร จนถึงการสแกนและขึ้นโชว์บนหน้าจอ แบบ End-to-End</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Sequence Diagram -->
+<div class="slide-container" id="slide3">
+    <h2 class="slide-title">ภาพรวมการทำงาน (System Sequence)</h2>
+    <div class="content-area">
+        <div class="swimlane-container">
+            <!-- Lane 1 -->
+            <div class="swimlane-col">
+                <div class="swimlane-header"><i class="fa-solid fa-user"></i> ประชาชน</div>
+                <div class="process-box" style="margin-top: 5vh;">1. ยืนยันตัวตน</div>
+                <div class="process-box" style="margin-top: 8vh;">3. กากบาท & หย่อนบัตร</div>
+                <div class="process-box" style="margin-top: 8vh;">5. ตรวจสอบแอป</div>
+            </div>
+            <!-- Lane 2 -->
+            <div class="swimlane-col">
+                <div class="swimlane-header"><i class="fa-solid fa-mobile-screen"></i> Kiosk / แอป</div>
+                <div class="process-box" style="margin-top: 5vh; border-color: #3b82f6;">สร้าง Hash ID</div>
+                <div class="process-box" style="border-color: #3b82f6;">2. พิมพ์บัตรเลือกตั้ง</div>
+            </div>
+            <!-- Lane 3 -->
+            <div class="swimlane-col">
+                <div class="swimlane-header"><i class="fa-solid fa-print"></i> ศูนย์นับคะแนน</div>
+                <div style="height: 30vh;"></div>
+                <div class="process-box" style="border-color: #f59e0b;">4. สแกนบัตร (OCR)</div>
+            </div>
+            <!-- Lane 4 -->
+            <div class="swimlane-col">
+                <div class="swimlane-header"><i class="fa-solid fa-server"></i> ระบบกลาง</div>
+                <div style="height: 40vh;"></div>
+                <div class="process-box" style="border-color: #ef4444;">6. แสดงผลตรวจสอบ</div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 2vh; color: #64748b; font-size: 1.2vw;">แผนภาพแสดงการไหลของข้อมูลระหว่างผู้ใช้และระบบในแต่ละขั้นตอน</p>
+    </div>
+</div>
+
+<!-- Slide 4: Activity Flow -->
+<div class="slide-container" id="slide4">
+    <h2 class="slide-title">เส้นทางการเดินทางของบัตร (Activity Flow)</h2>
+    <div class="content-area">
+        <div class="flow-container">
+            <div class="flow-step">
+                <h4>1. ยืนยันตัวตน</h4>
+                <p>ที่ตู้ Kiosk</p>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <h4>2. รับบัตร & Hash</h4>
+                <p>พิมพ์ใบต่อใบ</p>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <h4>3. กากบาท</h4>
+                <p>ลงคะแนนจริง</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 2vh 0;"><i class="fa-solid fa-arrow-down" style="font-size: 3vw; color: #cbd5e1;"></i></div>
+
+        <div class="flow-container" style="flex-direction: row-reverse;">
+            <div class="flow-step" style="background:#ecfdf5; border-color:#10b981;">
+                <h4>6. ตรวจสอบ</h4>
+                <p>เช็คภาพบัตรตัวเอง</p>
+            </div>
+            <div class="flow-arrow">←</div>
+            <div class="flow-step" style="background:#ecfdf5; border-color:#10b981;">
+                <h4>5. อัปโหลด</h4>
+                <p>ขึ้น Cloud สาธารณะ</p>
+            </div>
+            <div class="flow-arrow">←</div>
+            <div class="flow-step" style="background:#ecfdf5; border-color:#10b981;">
+                <h4>4. สแกน (OCR)</h4>
+                <p>แปลงเป็นไฟล์ภาพ</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Kiosk Resource -->
+<div class="slide-container" id="slide5">
+    <h2 class="slide-title">ทรัพยากรหลัก: ตู้พิมพ์บัตร (Kiosk)</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h3>แก้ปัญหา "บัตรเขย่ง"</h3>
+                <p>ตู้ Kiosk จะพิมพ์บัตรเลือกตั้งออกมาก็ต่อเมื่อมีผู้มีสิทธิตัวจริงมายืนยันตัวตนเท่านั้น</p>
+                <ul style="margin-top: 20px;">
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:#10b981; margin-right: 10px;"></i> <strong>On-demand:</strong> ไม่มีการพิมพ์ทิ้งไว้</li>
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-check-circle" style="color:#10b981; margin-right: 10px;"></i> <strong>Unique Hash:</strong> สร้างรหัสลับเฉพาะตัว</li>
+                    <li><i class="fa-solid fa-check-circle" style="color:#10b981; margin-right: 10px;"></i> <strong>Real-time DB:</strong> เช็คสิทธิทันที</li>
+                </ul>
+            </div>
+            <div class="image-wrapper">
+                <i class="fa-solid fa-print"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Scanner Resource -->
+<div class="slide-container" id="slide6">
+    <h2 class="slide-title">ทรัพยากรหลัก: สแกนเนอร์ความเร็วสูง</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h3>เปลี่ยนกระดาษเป็นดิจิทัล</h3>
+                <p>High-speed scanners และระบบ OCR จะทำหน้าที่เปลี่ยนบัตรเลือกตั้งให้กลายเป็นหลักฐานดิจิทัลที่แก้ไขไม่ได้</p>
+                <ul style="margin-top: 20px;">
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-bolt" style="color:#10b981; margin-right: 10px;"></i> <strong>Massive Throughput:</strong> สแกนได้เร็วสูง</li>
+                    <li style="margin-bottom: 15px;"><i class="fa-solid fa-font" style="color:#10b981; margin-right: 10px;"></i> <strong>OCR Technology:</strong> อ่านลายมืออัตโนมัติ</li>
+                    <li><i class="fa-solid fa-cloud-upload" style="color:#10b981; margin-right: 10px;"></i> <strong>Instant Upload:</strong> ส่งข้อมูลขึ้นเว็บทันที</li>
+                </ul>
+            </div>
+            <div class="image-wrapper">
+                <i class="fa-solid fa-barcode"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: App Channel -->
+<div class="slide-container" id="slide7">
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h2 class="slide-title" style="border:none; padding:0; margin-bottom: 20px;">ช่องทาง: แอป "ทางรัฐ"</h2>
+                <p>แอปพลิเคชันทำหน้าที่เป็น <span class="accent-text">Secure Wallet</span> สำหรับประชาชน</p>
+                <p style="margin-top: 20px;">ใช้เก็บ "รหัส Hash ID" และ "ใบรับรองการเลือกตั้ง" เพื่อใช้ยืนยันว่าคุณไปใช้สิทธิแล้ว และใช้ตรวจสอบความถูกต้องของคะแนนภายหลัง</p>
+            </div>
+            <div class="image-wrapper">
+                 <i class="fa-solid fa-mobile-button" style="color: #10b981;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Verification Power -->
+<div class="slide-container" id="slide8">
+    <h2 class="slide-title">พลังแห่งการตรวจสอบ (Verification)</h2>
+    <div class="content-area">
+        <div style="display: flex; align-items: center; gap: 5vw; justify-content: center;">
+            <div style="font-size: 15vw; font-weight: 700; color: #10b981; line-height: 1; font-family: 'Prompt';">100%</div>
+            <div>
+                <h3>ตรวจสอบด้วยตาตัวเอง</h3>
+                <p>คุณไม่ต้องถามเจ้าหน้าที่ว่า "คะแนนถูกนับไหม?"</p>
+                <p>แต่คุณสามารถ <strong>"เห็นภาพบัตรที่คุณกากบาทด้วยมือตัวเอง"</strong> บนหน้าจอได้เลย</p>
+                <div style="margin-top: 30px; padding: 2vw; background: #f0fdf4; border-radius: 10px; border-left: 0.5vw solid #10b981;">
+                    <strong>Empowerment:</strong> คืนอำนาจให้ประชาชนเป็นเจ้าของคะแนนเสียงอย่างแท้จริง
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Crowd Sourcing -->
+<div class="slide-container" id="slide9">
+    <h2 class="slide-title">ช่วยกันจับโกง (Crowd-Sourced Fraud Detection)</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+            <div class="tile">
+                <i class="fa-solid fa-users"></i>
+                <h3>Public Auditor Network</h3>
+                <p>เมื่อข้อมูลบัตรทุกใบถูกเปิดเผย ประชาชนนับล้านคนจะช่วยกันเป็นตา (Auditor) ทำให้การโกงเป็นเรื่องที่เป็นไปไม่ได้</p>
+            </div>
+            <div class="tile">
+                <i class="fa-solid fa-bullhorn"></i>
+                <h3>Real-Time Accountability</h3>
+                <p>หากพบความผิดปกติแม้แต่จุดเดียว ระบบจะเปิดให้กด Report เพื่อนำไปสู่การตรวจสอบทันที</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Conclusion -->
+<div class="slide-container" id="slide10">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="title-layout">
+        <h2 style="font-size: 5vw;">มีคำถามเพิ่มเติมไหมครับ?</h2>
+        <p class="subtitle">ขอบคุณที่ร่วมออกแบบระบบการเลือกตั้งที่โปร่งใสไปด้วยกัน</p>
+        <div style="margin-top: 5vh; font-weight: 700; color: #10b981; font-size: 2vw; letter-spacing: 2px;">TRUSTLESS • TRACEABLE • TRANSPARENT</div>
+    </div>
+</div>
+
+</body>
+</html>
